@@ -2,9 +2,11 @@
 #include <arm_math.h>
 
 #include <asm_max.h>
+#include <math.h>
 
 float dp_c(float *a, float *b, size_t elems);
 float dp_cmsis(float *a, float *b, size_t elems);
+float variance_c(float *a, size_t elems);
 
 float f10_array[10] = {48.21, 79.48, 24.27, 28.82, 78.24, 88.49, 31.19, 5.52, 82.70, 77.73};
 
@@ -30,7 +32,7 @@ int main() {
 	int elems = sizeof(f1000_array)/sizeof(f1000_array[0]);
 
 	//test case w/N=3	
-	float a[] = {2.0, 2.0, -3.0}; 
+	float a[] = {2.0, 2.0, 3.0}; 
 	float b[] = {4.0, -2.0, -1.0};
 	int elem_test = sizeof(a)/sizeof(a[0]);
 	
@@ -40,6 +42,13 @@ int main() {
 	printf("Assembly           : %f\n", dp_cmsis(f1000_array,f1000_array, elems));
 	
 	//END OF TASK 1
+	
+	//TASK 2
+	
+	//Pure C
+	printf("%f\n", variance_c(a,elem_test));
+	
+	//END OF TASK 2
 	
 	/* LOOP TO FIND MAX*/
 	max = f10_array[0];
@@ -85,6 +94,7 @@ int main() {
 	return 0;
 }
 
+//Custom functions
 float dp_c(float *a, float *b, size_t elems){
 	int i;
 	float result = 0;
@@ -105,4 +115,22 @@ float dp_cmsis(float *a, float *b, size_t elems){
 		arm_add_f32(&op, &interop[i],&op, 1);
 	}
 	return op;
+}
+
+float variance_c(float *a, size_t elems){
+	int i;
+	float tempsum = 0;
+	float tempvar = 0;
+	float mean=0;
+	float var=0;
+	
+	for(i=0; i<elems;i++){
+		tempsum += a[i];
+		mean = tempsum/elems;
+		
+		
+		tempvar += pow((a[i]-mean),2);
+		var = tempvar/elems;
+	}
+	return var;
 }
