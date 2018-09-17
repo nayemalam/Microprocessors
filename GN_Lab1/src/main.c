@@ -33,20 +33,20 @@ int main() {
 
 	//test case w/N=3	
 	float a[] = {2.0, 2.0, 3.0}; 
-	float b[] = {4.0, -2.0, -1.0};
+	float b[] = {4.35, -2.06, -1.53};
 	int elem_test = sizeof(a)/sizeof(a[0]);
 	
 	//Pure C
 	printf("Pure C dot product : %f\n", dp_c(f1000_array, f1000_array, elems));
 	//CMSIS-DSP
-	printf("Assembly           : %f\n", dp_cmsis(f1000_array,f1000_array, elems));
+	printf("C: DSP             : %f\n", dp_cmsis(f1000_array,f1000_array, elems));
 	
 	//END OF TASK 1
 	
 	//TASK 2
 	
 	//Pure C
-	printf("%f\n", variance_c(a,elem_test));
+	printf("Pure C variance    : %f\n", variance_c(f1000_array,elems));
 	
 	//END OF TASK 2
 	
@@ -127,10 +127,12 @@ float variance_c(float *a, size_t elems){
 	for(i=0; i<elems;i++){
 		tempsum += a[i];
 		mean = tempsum/elems;
-		
-		
+		//printf("debug mean %f\n", mean);
+	}
+	for(i=0;i<elems;i++) {
 		tempvar += pow((a[i]-mean),2);
 		var = tempvar/elems;
+		//printf("debug var %f\n", tempvar);
 	}
 	return var;
 }
