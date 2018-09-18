@@ -2,13 +2,15 @@
 #include <arm_math.h>
 
 #include <asm_max.h>
+#include <asm_dot.h>
+#include <asm_var.h>
 #include <math.h>
 
 float dp_c(float *a, float *b, size_t elems);
 float dp_cmsis(float *a, float *b, size_t elems);
 float variance_c(float *a, size_t elems);
 float variance_cmsis(float *a, size_t elems);
-void 	arm_var_f32 (float32_t *pSrc, uint32_t blockSize, float32_t *pResult);
+void asm_dot(float *a, float *b, int N, float *result);
 
 float f10_array[10] = {48.21, 79.48, 24.27, 28.82, 78.24, 88.49, 31.19, 5.52, 82.70, 77.73};
 
@@ -36,14 +38,20 @@ int main() {
 	
 	//test case w/N=3	
 	float a[] = {2.0, 2.0, 3.0}; 
-	float b[] = {4.35, -2.06, -1.53};
+	float b[] = {4.0, -2.0, -1.0};
 	int elem_test = sizeof(a)/sizeof(a[0]);
 	
 	//Pure C
 	printf("Pure C dot product : %f\n", dp_c(f1000_array, f1000_array, elems));
+	
 	//CMSIS-DSP
-	printf("C: DSP             : %f\n", dp_cmsis(f1000_array,f1000_array, elems));
-	//OR using the function-call: arm_dot_prod_f32(f1000_array,f1000_array,elems,&result); -> same result as Pure C
+	arm_dot_prod_f32(f1000_array,f1000_array, elems,&result);
+	printf("C: DSP             : %f\n", result);
+	//OR using the function-call: dp_cmsis(f1000_array,f1000_array, elems) -> same result with t=0.00448175s (slower)
+	
+	//Assembly
+	asm_dot(f1000_array, f1000_array, elems, &result);
+	printf("Assembly           : %f\n", result);
 	
 	//END OF TASK 1
 	
@@ -56,6 +64,9 @@ int main() {
 	arm_var_f32(f1000_array,elems, &result);
 	printf("C: DSP variance    : %f\n", result);
 	
+	//Assembly
+	asm_var(f1000_array, elems, &result);
+	printf("Assembly Variance  : %f\n", result);
 	
 	//END OF TASK 2
 	
@@ -140,7 +151,7 @@ float variance_c(float *a, size_t elems){
 		//printf("debug mean %f\n", mean);
 	}
 	for(i=0;i<elems;i++) {
-		tempvar += pow((a[i]-mean),2);
+		tempvar += ((a[i]-mean)*(a[i]-mean));
 		var = tempvar/(elems-1); //do (elems-1) bc CMSIS library uses the N-1 (sample notation)
 		//printf("debug var %f\n", tempvar);
 	}

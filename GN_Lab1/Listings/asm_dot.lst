@@ -1,0 +1,88 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             test, CODE, READONLY
+    2 00000000         
+    3 00000000                 export           asm_dot     ; label must be exp
+                                                            orted if it is to b
+                                                            e used as a functio
+                                                            n in C
+    4 00000000         asm_dot
+    5 00000000         
+    6 00000000         ;**For ref: r0 = a, r1 = b, r2 = N, r3 = output result; 
+                       as outlined in header file;
+    7 00000000         
+    8 00000000 B430            PUSH             {R4,R5}     ; saving context ac
+                                                            cording to calling 
+                                                            convention
+    9 00000002         
+   10 00000002 F04F 0600       MOV              R6, #0      ; set result = 0
+   11 00000006 EE00 6A10       VMOV.f32         S0, R6      ; floating point re
+                                                            sult
+   12 0000000A         
+   13 0000000A         LOOP
+   14 0000000A 1E52            SUBS             R2, R2, #1  ;counter 
+   15 0000000C DB0C            BLT              DONE
+   16 0000000E EB00 0482       ADD              R4, R0, R2, LSL #2 ;array1
+   17 00000012 EB01 0582       ADD              R5, R1, R2, LSL #2 ;array2
+   18 00000016 EDD4 0A00       VLDR.f32         S1, [R4]
+   19 0000001A ED95 1A00       VLDR.f32         S2, [R5]
+   20 0000001E EE20 1A81       VMUL.f32         S2, S1, S2
+   21 00000022 EE30 0A01       VADD.f32         S0, S0, S2  ;essentially: resul
+                                                            t+=a[i]*b[i]
+   22 00000026 E7F0            B                LOOP
+   23 00000028         
+   24 00000028         DONE
+   25 00000028 ED83 0A00       VSTR.f32         S0,[R3]
+   26 0000002C BC30            POP              {R4,R5}
+   27 0000002E 4770            BX               LR
+   28 00000030                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\asm_dot.d -o.\objects\asm_dot.o -IP:\GXX_Lab1\RTE -IC
+:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\ARM\CMSI
+S\5.3.0\Device\ARM\ARMCM4\Include --predefine="__EVAL SETA 1" --predefine="__UV
+ISION_VERSION SETA 515" --predefine="_RTE_ SETA 1" --predefine="ARMCM4_FP SETA 
+1" --list=.\listings\asm_dot.lst asm\asm_dot.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DONE 00000028
+
+Symbol: DONE
+   Definitions
+      At line 24 in file asm\asm_dot.s
+   Uses
+      At line 15 in file asm\asm_dot.s
+Comment: DONE used once
+LOOP 0000000A
+
+Symbol: LOOP
+   Definitions
+      At line 13 in file asm\asm_dot.s
+   Uses
+      At line 22 in file asm\asm_dot.s
+Comment: LOOP used once
+asm_dot 00000000
+
+Symbol: asm_dot
+   Definitions
+      At line 4 in file asm\asm_dot.s
+   Uses
+      At line 3 in file asm\asm_dot.s
+Comment: asm_dot used once
+test 00000000
+
+Symbol: test
+   Definitions
+      At line 1 in file asm\asm_dot.s
+   Uses
+      None
+Comment: test unused
+4 symbols
+339 symbols in table
