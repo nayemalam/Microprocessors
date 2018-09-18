@@ -65,7 +65,7 @@ int main() {
 	printf("C: DSP variance    : %f\n", result);
 	
 	//Assembly
-	asm_var(f1000_array, elems, &result);
+	//asm_var(f1000_array, elems, &result);
 	printf("Assembly Variance  : %f\n", result);
 	
 	//END OF TASK 2
@@ -89,28 +89,7 @@ int main() {
 	printf("Pure C   : Max element f[%d] = %f\n", max_idx, max);
 	printf("Assembly : Max element f[%d] = %f\n", a_max_idx, a_max);
 	printf("C: DSP   : Max element f[%d] = %f\n", DSP_max_idx, DSP_max);
-
 	
-	/* LOOP TO FIND MAX*/
-	max = f1000_array[0];
-	max_idx = 0;
-	for(i=0 ; i<1000 ; i++) {
-		if(f1000_array[i] > max) {
-			max = f1000_array[i];
-			max_idx = i;
-		}	
-	}
-	
-	/* Assembly max function */
-	asm_max(f1000_array, 1000, &a_max, &a_max_idx);
-	
-	/* CMSIS-DSP max function */
-	arm_max_f32(f1000_array, 1000, &DSP_max, &DSP_max_idx);
-	
-	printf("Pure C   : Max element f[%d] = %f\n", max_idx, max);
-	printf("Assembly : Max element f[%d] = %f\n", a_max_idx, a_max);
-	printf("C: DSP   : Max element f[%d] = %f\n", DSP_max_idx, DSP_max);
-
 	return 0;
 }
 
