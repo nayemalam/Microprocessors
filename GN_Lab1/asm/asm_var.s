@@ -9,31 +9,36 @@ asm_var
 	
 			MOV 		 R6, #0                 ; set result = 0
 			VMOV.f32 S0, R6               	; floating point result
-			VSUB.f32 S5, S5, S5							; sum = 0
-			VLDR.f32 S9, [R1]
-			VCVT.f32.s32 S9,S9
+			MOV 		 R7, #0
+			VMOV.f32 S5, R7							  	; sum = 0
+			
 			
 MEAN	
-			SUBS 		 R1,R1, #1
-			BLT 		 VAR
-			ADD			 R4, R0, R1, LSL #2 		; array
-			VLDR.f32 S1, [R4]								; sum
-			B MEAN
-			VDIV.f32 S2, S1, S9							; mean
+			SUBS R5, R5, #1         
+			BLT MEAN              
+			ADD R4, R0, R5, LSL #2  
+			VLDR.f32 S2, [R4]       
+			VADD.f32 S4, S2   
+			B MEAN 
+			VMOV.f32 S1, R1
+			VCVT.F32.S32 S1, S1 
+			VDIV.f32 S4, S4, S1     			; S4 is the average of the array 
+			MOV R5, R1
+			B VAR 
 			
 VAR	
-			SUBS 		 R1, R1, #1 						;counter 
-			BLT 		 DONE
-			ADD 		 R5, R0, R1, LSL #2 		; array
-			VLDR.f32 S3, [R5]								; load it to float
-			VSUB.f32 S4, S3, S2							; subtract by mean (a[i]-mean)
-			VMUL.f32 S4, S4, S4							; (a[i]-mean)^2
-			VLDR.f32 S10,[R1]
-			VDIV.f32 S5, S4, S10							
+			SUBS R5, R5, #1         
+			BLT DONE            
+			ADD R4, R0, R5, LSL #2  		;array a
+			VLDR.f32 S2, [R4]       
+			VSUB.f32 S2, S2, S4
+			VMUL.f32 S2, S2, S2
+			VADD.f32 S5, S5, S2
 			B VAR
 			
 DONE	
-			VSTR.f32 S0,[R3]
+			VDIV.f32 S5, S5, S1 
+			VSTR.f32 S5, [R2]
 			POP {R4,R5}
 			BX LR
 			END

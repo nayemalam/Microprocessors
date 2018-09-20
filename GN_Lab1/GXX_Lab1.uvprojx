@@ -427,6 +427,16 @@
               <FileType>2</FileType>
               <FilePath>.\asm\asm_max.s</FilePath>
             </File>
+            <File>
+              <FileName>asm_dot.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\asm\asm_dot.s</FilePath>
+            </File>
+            <File>
+              <FileName>asm_var.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\asm\asm_var.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

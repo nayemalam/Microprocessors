@@ -22,35 +22,40 @@ ARM Macro Assembler    Page 1
    10 00000002 F04F 0600       MOV              R6, #0      ; set result = 0
    11 00000006 EE00 6A10       VMOV.f32         S0, R6      ; floating point re
                                                             sult
-   12 0000000A EE72 2AE2       VSUB.f32         S5, S5, S5  ; sum = 0
-   13 0000000E EDD1 4A00       VLDR.f32         S9, [R1]
-   14 00000012 EEF8 4AE4       VCVT.f32.s32     S9,S9
-   15 00000016         
-   16 00000016         MEAN
-   17 00000016 1E49            SUBS             R1,R1, #1
-   18 00000018 DB06            BLT              VAR
-   19 0000001A EB00 0481       ADD              R4, R0, R1, LSL #2 ; array
-   20 0000001E EDD4 0A00       VLDR.f32         S1, [R4]    ; sum
-   21 00000022 E7F8            B                MEAN
-   22 00000024 EE80 1AA4       VDIV.f32         S2, S1, S9  ; mean
-   23 00000028         
-   24 00000028         VAR
-   25 00000028 1E49            SUBS             R1, R1, #1  ;counter 
-   26 0000002A DB0C            BLT              DONE
-   27 0000002C EB00 0581       ADD              R5, R0, R1, LSL #2 ; array
-   28 00000030 EDD5 1A00       VLDR.f32         S3, [R5]    ; load it to float
-   29 00000034 EE31 2AC1       VSUB.f32         S4, S3, S2  ; subtract by mean 
-                                                            (a[i]-mean)
-   30 00000038 EE22 2A02       VMUL.f32         S4, S4, S4  ; (a[i]-mean)^2
-   31 0000003C ED91 5A00       VLDR.f32         S10,[R1]
-   32 00000040 EEC2 2A05       VDIV.f32         S5, S4, S10
-   33 00000044 E7F0            B                VAR
-   34 00000046         
-   35 00000046         DONE
-   36 00000046 ED83 0A00       VSTR.f32         S0,[R3]
-   37 0000004A BC30            POP              {R4,R5}
-   38 0000004C 4770            BX               LR
-   39 0000004E                 END
+   12 0000000A F04F 0700       MOV              R7, #0
+   13 0000000E EE02 7A90       VMOV.f32         S5, R7      ; sum = 0
+   14 00000012         
+   15 00000012         
+   16 00000012         MEAN
+   17 00000012 1E6D            SUBS             R5, R5, #1
+   18 00000014 DBFD            BLT              MEAN
+   19 00000016 EB00 0485       ADD              R4, R0, R5, LSL #2
+   20 0000001A ED94 1A00       VLDR.f32         S2, [R4]
+   21 0000001E EE32 2A01       VADD.f32         S4, S2
+   22 00000022 E7F6            B                MEAN
+   23 00000024 EE00 1A90       VMOV.f32         S1, R1
+   24 00000028 EEF8 0AE0       VCVT.F32.S32     S1, S1
+   25 0000002C EE82 2A20       VDIV.f32         S4, S4, S1  ; S4 is the average
+                                                             of the array 
+   26 00000030 460D            MOV              R5, R1
+   27 00000032 E7FF            B                VAR
+   28 00000034         
+   29 00000034         VAR
+   30 00000034 1E6D            SUBS             R5, R5, #1
+   31 00000036 DB0A            BLT              DONE
+   32 00000038 EB00 0485       ADD              R4, R0, R5, LSL #2 ;array a
+   33 0000003C ED94 1A00       VLDR.f32         S2, [R4]
+   34 00000040 EE31 1A42       VSUB.f32         S2, S2, S4
+   35 00000044 EE21 1A01       VMUL.f32         S2, S2, S2
+   36 00000048 EE72 2A81       VADD.f32         S5, S5, S2
+   37 0000004C E7F2            B                VAR
+   38 0000004E         
+   39 0000004E         DONE
+   40 0000004E EEC2 2AA0       VDIV.f32         S5, S5, S1
+   41 00000052 EDC2 2A00       VSTR.f32         S5, [R2]
+   42 00000056 BC30            POP              {R4,R5}
+   43 00000058 4770            BX               LR
+   44 0000005A                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=.\objects\asm_var.d -o.\objects\asm_var.o -IP:\GXX_Lab1\RTE -IC
 :\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\ARM\CMSI
@@ -63,30 +68,31 @@ ISION_VERSION SETA 515" --predefine="_RTE_ SETA 1" --predefine="ARMCM4_FP SETA
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-DONE 00000046
+DONE 0000004E
 
 Symbol: DONE
    Definitions
-      At line 35 in file asm\asm_var.s
+      At line 39 in file asm\asm_var.s
    Uses
-      At line 26 in file asm\asm_var.s
+      At line 31 in file asm\asm_var.s
 Comment: DONE used once
-MEAN 00000016
+MEAN 00000012
 
 Symbol: MEAN
    Definitions
       At line 16 in file asm\asm_var.s
    Uses
-      At line 21 in file asm\asm_var.s
-Comment: MEAN used once
-VAR 00000028
+      At line 18 in file asm\asm_var.s
+      At line 22 in file asm\asm_var.s
+
+VAR 00000034
 
 Symbol: VAR
    Definitions
-      At line 24 in file asm\asm_var.s
+      At line 29 in file asm\asm_var.s
    Uses
-      At line 18 in file asm\asm_var.s
-      At line 33 in file asm\asm_var.s
+      At line 27 in file asm\asm_var.s
+      At line 37 in file asm\asm_var.s
 
 asm_var 00000000
 

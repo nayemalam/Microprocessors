@@ -7,26 +7,26 @@ asm_dot
 
 			PUSH {R4-R6}                    ; saving context according to calling convention
 			
-			VLDR.f32 	 S0, [R0]
-			VLDR.f32 	 S1, [R1]
-			MOV 		 R5, #0
-			VMOV.f32 	 S2, R5               	; floating point result
+			VLDR.f32 S0, [R0]
+			VLDR.f32 S1, [R1]
+			VMOV.f32 S2, R5               	; floating point result
 			MOV 		 R6, #0                 ; set i = 0
 			
 LOOP					
-			ADD			 R6, R6, #1			;i
-			CMP 		 R2, R6				;N & i
-			BLT			 DONE				;when i < N -> DONE
+			ADD			 R6, R6, #1							;i
+			CMP 		 R2, R6									;N & i
+			BLT			 DONE									  ;when i < N -> DONE
 			ADD 		 R4, R0, R6, LSL #2 		;array1
 			ADD			 R5, R1, R6, LSL #2 		;array2
-			VMLA.f32 	 S2, S0, S1
-			VLDR.f32 	 S0, [R4] 							
-			VLDR.f32 	 S1, [R5]
+			VMLA.f32 S2, S0, S1
+			VLDR.f32 S0, [R4] 							
+			VLDR.f32 S1, [R5]
+			;VMUL.f32 S2, S0, S1
 			;VADD.f32 S2, S2, S2 						;essentially: result+=a[i]*b[i]
 			B 			 LOOP		
 
 DONE	
-			VSTR.f32	 S2,[R3]
+			VSTR.f32 S2,[R3]
 			POP 		 {R4-R6}
 			BX 			 LR
 			END
