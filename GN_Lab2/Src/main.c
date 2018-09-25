@@ -14,7 +14,7 @@ static void MX_DAC1_Init(void);
 int main(void)
 {
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   HAL_Init();
 	
   /* Configure the system clock */
   SystemClock_Config();
@@ -23,7 +23,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DAC1_Init();
 
-	
+	 
 	/* Turn on LED */
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET  );
 
@@ -31,22 +31,47 @@ int main(void)
 	
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	int counter = 0;
-	HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
-	
+	int triangle = 0;
+	int isRising = 1;
+	//HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
+			
   while (1)
   {
 		//D7 Channel 1
 		//D13 Channel 2
-		//HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
 		
 		if(counter == 255){
 			counter = 0;
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
 		} else{
 			counter++;
-			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
 		}
 		
+			// Triangle wave
+			// If the wave is rising
+			if(isRising){
+				if(triangle == 255){
+					isRising = 0;
+				}else{
+					triangle++;
+				}
+			// If the wave is falling
+			}else{
+				if(triangle == 0){
+					isRising = 1;
+				}else{
+					triangle--;
+				}
+			}				
+		//HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, triangle);
+		
+		// Write Sawtooth to D7
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, counter);
+			
+		//Write triangle on D13
+		HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
+		HAL_DACEx_TriangleWaveGenerate(&hdac1, DAC_CHANNEL_2, 4095);
+
+		// push button	
 		int buttonState = HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13);
 		
 		if( buttonState == 0){ //active low
@@ -54,10 +79,8 @@ int main(void)
 		} else {
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
 		}
-		
-		 HAL_DACEx_TriangleWaveGenerate(&hdac1, DAC_CHANNEL_1, DAC_TRIANGLEAMPLITUDE_255);
-		
-		//********** Student code here *************//
+				
+			//********** Student code here *************//
   }
 }
 
