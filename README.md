@@ -1,4 +1,4 @@
-# Microprocessors
+# Microprocessors :exclamation: :exclamation:
 ECSE444 - Assignments <br>
 
 :point_right: <a href="https://github.com/nayemalam/Microprocessors_Final_Project">Link</a> to my final project - audio application that performs blind source separation (BSS) using the Fast Independent Component Analysis (FastICA) algorithm.
